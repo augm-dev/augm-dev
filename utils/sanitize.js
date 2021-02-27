@@ -1,9 +1,8 @@
 import path from 'path'
 
 let defaultConfig = {
-  input: '/src',
-  output: '/dist',
-  builds: [],
+  input: '',
+  builders: [],
   onWarn: ()=>{},
   onError: ()=>{},
   onWarn: ()=>{}
@@ -12,18 +11,15 @@ let defaultConfig = {
 export function sanitize(config={}){
   let result = {}
   if(typeof config === 'object'){
-    let { input, output, builds, onError, onWarn, onSuccess } = config
+    let { input, builders, onError, onWarn, onSuccess } = config
     if(typeof input === 'string'){
       result.input = path.normalize(input)
     }
-    if(typeof output === 'string'){
-      result.output = path.normalize(output)
-    }
-    if(Array.isArray(builds)){
-      builds = builds.filter(b => (
+    if(Array.isArray(builders)){
+      builders = builders.filter(b => (
         b && (b.single || b.aggregate)
       ))
-      result.builds = builds
+      result.builders = builders
     }
     if(typeof onError === 'function'){
       result.onError = onError

@@ -4,34 +4,11 @@ import path from 'path'
 import { fstat } from 'fs'
 
 export function builder(config){
-  let { input, output, builds, onWarn, onSuccess, onError } = sanitize(config)
-
-
-  function getId({ abs_path }){
-    // remove cwd
-    let rel = path.normalize(abs_path.replace(process.cwd(), ''))
-    // remove input dir
-    let id = path.normalize(rel.replace(input, ''))
-    // remove js extension
-    return id.substr(0,id.length-3)
-  }
-
-  let printer = {
-    warn(){
-      onWarn.apply(null, arguments)
-    },
-    error(){
-      onError.apply(null, arguments)
-    },
-    success(){
-      onSuccess.apply(null, arguments)
-    }
-  }
-
+  let { input, builders } = sanitize(config)
 
   let singles = []
   let aggregates = {}
-  builds.forEach(({ single, aggregate }) => {
+  builders.forEach(({ single, aggregate }) => {
     if(single && typeof single === 'function'){
       singles.push(single)
     }
@@ -43,10 +20,11 @@ export function builder(config){
   function file_info(x){
     let info = {}
     if(typeof x === 'string'){
+      delete require.cache[x]
       info = {
         p: x,
         contents: fs.readFileSync(x),
-        module: fs.readFileSync(x)
+        module: require(x)
       }
     } else {
       info = x
@@ -63,10 +41,10 @@ export function builder(config){
     changed = changed.map(file_info)
     total = total.map(file_info)
     
-    changed.forEach(file_info => {
-      let singleObj = mergeObj(singles.map(f => f(file_info.id)))
+    changed.forEach(info => {
+      let singleObj = mergeObj(singles.map(f => f(info.id)))
       for(let k in singleObj){
-        promisedObj[k] = singleObj[k](file_info)
+        promisedObj[k] = singleObj[k](info)
       }
     })
     for(let k in aggregates){
@@ -75,7 +53,7 @@ export function builder(config){
     let result = await resolveObj(promisedObj)
     let out = {}
     for(let k in result){
-      out[path.join(process.cwd(), output, k)] = result[k]
+      out[path.join(process.cwd(), k)] = result[k]
     }
     return out;
   }

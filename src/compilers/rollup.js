@@ -2,6 +2,7 @@ import { compile as esbuild_compile } from './esbuild'
 
 const rollupStream = require('@rollup/stream');
 const virtual = require('@rollup/plugin-virtual');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const fs = require('fs')
 
 export async function compile(code, { npm, local, alias, minify, optimize }={}){
@@ -18,7 +19,8 @@ export async function compile(code, { npm, local, alias, minify, optimize }={}){
       },
       plugins: [
         virtual(Object.assign({entry: code}, alias ? { '@': fs.readFileSync(alias,'utf8') } : {} )),
-        rollup_resolve_plugin({ local, npm })
+        rollup_resolve_plugin({ local, npm }),
+        nodeResolve()
       ]
     })
     let bundle = ''
@@ -52,11 +54,6 @@ function rollup_resolve_plugin({ local, npm } = {}){
           return {
             id: resolution.path,
             external: resolution.external
-          }
-        } else {
-          return {
-            id: dep,
-            external: false
           }
         }
       }

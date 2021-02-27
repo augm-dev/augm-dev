@@ -1,5 +1,13 @@
-import path from 'path';
-import 'fs';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var path = require('path');
+require('fs');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 
 let defaultConfig = {
   input: '',
@@ -14,7 +22,7 @@ function sanitize(config={}){
   if(typeof config === 'object'){
     let { input, builders, onError, onWarn, onSuccess } = config;
     if(typeof input === 'string'){
-      result.input = path.normalize(input);
+      result.input = path__default['default'].normalize(input);
     }
     if(Array.isArray(builders)){
       builders = builders.filter(b => (
@@ -76,7 +84,7 @@ function builder(config){
     } else {
       info = x;
     }
-    info.id = path.normalize(info.p.replace(process.cwd(),'').replace(input, ''));
+    info.id = path__default['default'].normalize(info.p.replace(process.cwd(),'').replace(input, ''));
     info.id = info.id.substr(0,info.id.length - 3);
     return info
   }
@@ -100,7 +108,7 @@ function builder(config){
     let result = await resolveObj(promisedObj);
     let out = {};
     for(let k in result){
-      out[path.join(process.cwd(), k)] = result[k];
+      out[path__default['default'].join(process.cwd(), k)] = result[k];
     }
     return out;
   }
@@ -123,7 +131,7 @@ async function compile$1(code,{
         loader: 'js',
       }, alias ? {
         // sourcefile: source,
-        resolveDir: path.dirname(alias)
+        resolveDir: path__default['default'].dirname(alias)
       } : {}),
       format: 'esm',
       write: false,
@@ -389,4 +397,6 @@ let printer = {
   silent: false
 };
 
-export { builder, compile, printer };
+exports.builder = builder;
+exports.compile = compile;
+exports.printer = printer;
