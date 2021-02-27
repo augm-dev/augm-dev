@@ -20,13 +20,14 @@ export function sanitize(config={}){
     if(typeof input === 'string'){
       result.input = path.normalize(input)
     }
-    if(Array.isArray(builders)){
-      builders = flatten(builders)
-      builders = builders.filter(b => (
-        b && (b.single || b.aggregate)
-      ))
-      result.builders = builders
-    }
+    
+    builders = Array.isArray(builders) ? builders : [builders]
+    builders = flatten(builders)
+    builders = builders.filter(b => (
+      b && (b.single || b.aggregate)
+    ))
+    result.builders = builders
+
     if(typeof onError === 'function'){
       result.onError = onError
     }
