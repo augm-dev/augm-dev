@@ -8,6 +8,11 @@ let defaultConfig = {
   onWarn: ()=>{}
 }
 
+function flatten(arr, d = Infinity) {
+  return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), [])
+               : arr.slice();
+};
+
 export function sanitize(config={}){
   let result = {}
   if(typeof config === 'object'){
@@ -16,6 +21,7 @@ export function sanitize(config={}){
       result.input = path.normalize(input)
     }
     if(Array.isArray(builders)){
+      builders = flatten(builders)
       builders = builders.filter(b => (
         b && (b.single || b.aggregate)
       ))

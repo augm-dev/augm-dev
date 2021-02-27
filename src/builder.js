@@ -1,5 +1,4 @@
-import { sanitize } from '../utils'
-import { mergeObj, resolveObj } from '../utils'
+import { mergeObj, resolveObj, sanitize } from './utils'
 import path from 'path'
 import { fstat } from 'fs'
 
