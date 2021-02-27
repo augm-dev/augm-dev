@@ -24,12 +24,11 @@
     "test": "npm run build && serve"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^8.1.0",
-    "rollup": "^2.40.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.1.5"
   },
   "dependencies": {
+    "@rollup/plugin-node-resolve": "^8.1.0",
     "@rollup/plugin-virtual": "^2.0.3",
     "@rollup/stream": "^2.0.0",
     "augm-it": "^0.4.5",
@@ -37,6 +36,7 @@
     "esbuild": "^0.8.50",
     "hash-obj": "^3.0.0",
     "object-hash": "^2.1.1",
+    "rollup": "^2.40.0",
     "skypin": "^2.0.10",
     "stringified-handler": "^0.4.3"
   }
