@@ -3,11 +3,11 @@ import path from 'path'
 import { fstat } from 'fs'
 
 export function builder(config){
-  let { input, builders } = sanitize(config)
+  let { input, builds } = sanitize(config)
 
   let singles = []
   let aggregates = {}
-  builders.forEach(({ single, aggregate }) => {
+  builds.forEach(({ single, aggregate }) => {
     if(single && typeof single === 'function'){
       singles.push(single)
     }
@@ -39,7 +39,6 @@ export function builder(config){
     let promisedObj = {}
     changed = changed.map(file_info)
     total = total.map(file_info)
-    
     changed.forEach(info => {
       let singleObj = mergeObj(singles.map(f => f(info.id)))
       for(let k in singleObj){

@@ -55,6 +55,8 @@ function rollup_resolve_plugin({ local, npm } = {}){
             id: resolution.path,
             external: resolution.external
           }
+        } else {
+          return nodeResolve().resolveId(dep)
         }
       }
     }

@@ -2,7 +2,7 @@ import path from 'path'
 
 let defaultConfig = {
   input: '',
-  builders: [],
+  builds: [],
   onWarn: ()=>{},
   onError: ()=>{},
   onWarn: ()=>{}
@@ -16,17 +16,17 @@ function flatten(arr, d = Infinity) {
 export function sanitize(config={}){
   let result = {}
   if(typeof config === 'object'){
-    let { input, builders, onError, onWarn, onSuccess } = config
+    let { input, builds, onError, onWarn, onSuccess } = config
     if(typeof input === 'string'){
       result.input = path.normalize(input)
     }
-    
-    builders = Array.isArray(builders) ? builders : [builders]
-    builders = flatten(builders)
-    builders = builders.filter(b => (
+
+    builds = Array.isArray(builds) ? builds : [builds]
+    builds = flatten(builds)
+    builds = builds.filter(b => (
       b && (b.single || b.aggregate)
     ))
-    result.builders = builders
+    result.builds = builds
 
     if(typeof onError === 'function'){
       result.onError = onError

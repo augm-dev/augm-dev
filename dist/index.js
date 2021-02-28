@@ -3,7 +3,7 @@ import 'fs';
 
 let defaultConfig = {
   input: '',
-  builders: [],
+  builds: [],
   onWarn: ()=>{},
   onError: ()=>{},
   onWarn: ()=>{}
@@ -16,17 +16,17 @@ function flatten(arr, d = Infinity) {
 function sanitize(config={}){
   let result = {};
   if(typeof config === 'object'){
-    let { input, builders, onError, onWarn, onSuccess } = config;
+    let { input, builds, onError, onWarn, onSuccess } = config;
     if(typeof input === 'string'){
       result.input = path.normalize(input);
     }
-    
-    builders = Array.isArray(builders) ? builders : [builders];
-    builders = flatten(builders);
-    builders = builders.filter(b => (
+
+    builds = Array.isArray(builds) ? builds : [builds];
+    builds = flatten(builds);
+    builds = builds.filter(b => (
       b && (b.single || b.aggregate)
     ));
-    result.builders = builders;
+    result.builds = builds;
 
     if(typeof onError === 'function'){
       result.onError = onError;
@@ -57,11 +57,11 @@ function mergeObj(arr=[]){
 }
 
 function builder(config){
-  let { input, builders } = sanitize(config);
+  let { input, builds } = sanitize(config);
 
   let singles = [];
   let aggregates = {};
-  builders.forEach(({ single, aggregate }) => {
+  builds.forEach(({ single, aggregate }) => {
     if(single && typeof single === 'function'){
       singles.push(single);
     }
@@ -93,7 +93,6 @@ function builder(config){
     let promisedObj = {};
     changed = changed.map(file_info);
     total = total.map(file_info);
-    
     changed.forEach(info => {
       let singleObj = mergeObj(singles.map(f => f(info.id)));
       for(let k in singleObj){
@@ -238,6 +237,8 @@ function rollup_resolve_plugin({ local, npm } = {}){
             id: resolution.path,
             external: resolution.external
           }
+        } else {
+          return nodeResolve().resolveId(dep)
         }
       }
     }
