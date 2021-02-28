@@ -9,6 +9,10 @@ let defaultConfig = {
   onWarn: ()=>{}
 };
 
+function flatten(arr, d = Infinity) {
+  return d > 0 ? arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val), [])
+               : arr.slice();
+}
 function sanitize(config={}){
   let result = {};
   if(typeof config === 'object'){
@@ -16,12 +20,14 @@ function sanitize(config={}){
     if(typeof input === 'string'){
       result.input = path.normalize(input);
     }
-    if(Array.isArray(builders)){
-      builders = builders.filter(b => (
-        b && (b.single || b.aggregate)
-      ));
-      result.builders = builders;
-    }
+    
+    builders = Array.isArray(builders) ? builders : [builders];
+    builders = flatten(builders);
+    builders = builders.filter(b => (
+      b && (b.single || b.aggregate)
+    ));
+    result.builders = builders;
+
     if(typeof onError === 'function'){
       result.onError = onError;
     }
